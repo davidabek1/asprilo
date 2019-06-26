@@ -13,8 +13,20 @@ and solving with MAPF solvers.
   we have found it can be installed on Linux only (some commands exists only on Linux platform).
 * Read carefully asprilo site and install the generator and vizualizer.
 * Install dotnet core, in order to be able to run the MAPF solvers DLLs.
-* 
+* create asprilo folder under users home directory, and clone this files and folders into it.
 ## Running the tests
+
+### Generating logistic M problems
+
+* update generate_problems.py file with your home directory
+* run generate_problems.py
+* problems will be generated into generatedInstances folder
+* problems are spanning robots in the warehouse from 5 to 80 steping 5, 
+  - it is a medium size grid warehouse of 15X12
+  - quantity of robots is equal to number of shelves to number of products to number of orders 
+    to number of total units.
+    
+### Running solvers and documenting results
 
 ## Running a Demo
 
