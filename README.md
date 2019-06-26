@@ -28,5 +28,14 @@ and solving with MAPF solvers.
     
 ### Running solvers and documenting results
 
+* open asprilo_solver.py and update your home directory
+* run asprilo_solver.py
+  - it will run through all generated problems in generatedInstances folder
+  - run asprilo solver against each problem and document solution and time 
+    (keep assignment of robots to shelves)
+  - translate the prolbem into MAPF problem by generating agents file and map file
+  - run dotnet solvers and document solutions steps and time
+  solvers: A*+OD+ID, EPEA*, ICTS+ID, CBS
+  - create solvers_results.csv file with all documented results.
 ## Running a Demo
 
