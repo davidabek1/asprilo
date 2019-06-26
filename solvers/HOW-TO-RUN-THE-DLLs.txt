@@ -1,0 +1,11 @@
+dotnet run mapf-solver.dll /home/eli/Downloads/disjoint-CBSH/maps/Instance-8-20-9-96.map /home/eli/Downloads/disjoint-CBSH/agents/Instance-8-20-9-96.agents
+
+generation scripts:
+gen --grid-x 9 --grid-y 6 -r 3 -s 3 -N 1 --prs 1 --spr 1 --pus 1 --ol 1 --highway-layout -X 4 -Y 2 -p 1 -P 3 -u 3 -o 3 -d problems_ --instance-dir
+
+running conversion code from asprilo to MAPF:
+python3 from_asprilo.py 'x9_y6_n54_r3_s3_ps1_pr3_u3_o3_l3_N001.lp'
+
+
+
+
