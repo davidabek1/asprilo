@@ -4,7 +4,7 @@
 #include "./action-M.ilp".
 
 % Order fulfillment (Goal condition)
-#include "./goal-M.ilp".
+#include "./goal-M-assign.ilp".
 
 % Output conversion
 #include "./output-M.ilp".
