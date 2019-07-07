@@ -7,9 +7,10 @@ import collections
 from ast import literal_eval
 
 
-os.chdir('/home/david/asprilo/')
+#os.chdir('/home/david/asprilo/')
+os.chdir('/home/zeged/mygits/asprilo/')
 problems = glob.glob('generatedInstances/*.lp')
-
+print(f'found {len(problems)} problems')
 
 def write_line(filename, dict, is_first=False):
     dict = collections.OrderedDict(sorted(dict.items()))
@@ -84,7 +85,7 @@ def gen_map_file(grid_X, grid_Y, nodes, filename):
 
             # end of line?
             if col != grid_X-1:
-                file_content += ','
+                file_content += ''
             else:
                 file_content += '\n'
 
@@ -127,6 +128,17 @@ def gen_cbs_plan(cbs_plan, filename):
         f.write(cbs_plan)
     return max_steps
 
+def gen_macbs_plan(macbs_plan, filename):
+    max_steps = macbs_plan.count('\n')
+    with open(filename, 'w') as f:
+        f.write(macbs_plan)
+    return max_steps
+
+def gen_macbs_cl_plan(macbs_cl_plan, filename):
+    max_steps = macbs_cl_plan.count('\n')
+    with open(filename, 'w') as f:
+        f.write(macbs_cl_plan)
+    return max_steps
 
 def prob_order(x):
     r_loc = x.find('_r')
@@ -141,7 +153,7 @@ problems = sorted(problems, key=prob_order)
 is_first = True
 for p in problems:
     start_time = time.time()
-    content = subprocess.run('clingo encodings/m/encoding.ilp {} --outf=0 -V0 --out-atomf=%s. | head -n1'.format(p),stdout=subprocess.PIPE,shell=True)
+    content = subprocess.run('clingo encodings/m/encoding.ilp {} --outf=0 -V0 --out-atomf=%s.  | head -n1'.format(p),stdout=subprocess.PIPE,shell=True)
     solve_time = time.time() - start_time
     solver_output = content.stdout.decode('utf-8')
     solver_success = not(content.returncode)
@@ -153,30 +165,42 @@ for p in problems:
         gen_agents_file(agents, p[:-2]+'agents')
         gen_map_file(grid_X, grid_Y, nodes, p[:-2]+'map')
         gen_init_instance(init_plan, p[:-2]+'init')
+
         #a_star
         start_time = time.time()
-        content = subprocess.run('dotnet solvers/A_Star_WithOD_WithID.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
+        content = subprocess.run('dotnet solvers/A_Star_WithOD_WithID-MAKESPAN.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
         a_star_time = time.time() - start_time
         a_star_output = content.stdout.decode('utf-8')
         a_star_plan_file = p[:-2]+'astar'
         astar_steps = gen_a_star_plan(a_star_output,a_star_plan_file)
+
         #EPEAstarWithID
         start_time = time.time()
-        content = subprocess.run('dotnet solvers/EPEAstarWithID.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
+        content = subprocess.run('dotnet solvers/EPEAstarWithID-MAKESPAN.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
         epea_time = time.time() - start_time
         epea_output = content.stdout.decode('utf-8')
         epea_plan_file = p[:-2]+'epea'
         epea_steps = gen_epea_plan(epea_output,epea_plan_file)
-        #ICTS_WithID
+
+        #macbs-over-epeastar-20-withBypass-MAKESPAN
         start_time = time.time()
-        content = subprocess.run('dotnet solvers/ICTS_WithID.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
-        icts_time = time.time() - start_time
-        icts_output = content.stdout.decode('utf-8')
-        icts_plan_file = p[:-2]+'icts'
-        icts_steps = gen_icts_plan(icts_output,icts_plan_file)
-        #modern-cbs
+        content = subprocess.run('dotnet solvers/macbs-over-epeastar-20-withBypass-MAKESPAN.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
+        macbs_time = time.time() - start_time
+        macbs_output = content.stdout.decode('utf-8')
+        macbs_plan_file = p[:-2]+'cbs'
+        macbs_steps = gen_macbs_plan(macbs_output,macbs_plan_file)
+
+        #macbs-over-epeastar-20-withBypass-withCardinalLookahead-MAKESPAN
         start_time = time.time()
-        content = subprocess.run('dotnet solvers/modern-cbs.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
+        content = subprocess.run('dotnet solvers/macbs-over-epeastar-20-withBypass-withCardinalLookahead-MAKESPAN.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
+        macbs_lh_time = time.time() - start_time
+        macbs_lh_output = content.stdout.decode('utf-8')
+        macbs_lh_plan_file = p[:-2]+'cbs'
+        macbs_lh_steps = gen_macbs_cl_plan(macbs_lh_output,macbs_lh_plan_file)
+
+        #cbs-withBypass-withCardinalLookahead-MAKESPAN
+        start_time = time.time()
+        content = subprocess.run('dotnet solvers/cbs-withBypass-withCardinalLookahead-MAKESPAN.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
         cbs_time = time.time() - start_time
         cbs_output = content.stdout.decode('utf-8')
         cbs_plan_file = p[:-2]+'cbs'
@@ -184,7 +208,8 @@ for p in problems:
     test_scores = {'problem_file': p, 'asp_time': solve_time, 'asp_steps': max_steps \
                    ,'astar_time': a_star_time, 'astar_steps': astar_steps \
                    ,'epea_time': epea_time, 'epea_steps': epea_steps \
-                   ,'icts_time': icts_time, 'icts_steps': icts_steps \
+                   ,'macbs_time': macbs_time, 'macbs_steps': macbs_steps \
+                   ,'macbs_lh_time': macbs_lh_time, 'macbs_lh_steps': macbs_lh_steps \
                    ,'cbs_time': cbs_time, 'cbs_steps': cbs_steps}
     write_line('solvers_results.csv',test_scores,is_first)
     is_first=False
