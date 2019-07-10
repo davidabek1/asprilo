@@ -149,10 +149,29 @@ def prob_order(x):
     return int(r_no+N_no)
 
 
+
+astar_fail = False
+astar_fail_counter = 0
+
+macbs_fail = False
+macbs_fail_counter = 0
+
+icts_fail = False
+icts_fail_counter = 0
+
+cbs_fail = False
+cbs_fail_counter = 0
+
+fail_limit = 5
+
 problems = sorted(problems, key=prob_order)
 is_first = True
 for p in problems:
     print(p)
+    if astar_fail and macbs_fail and icts_fail and cbs_fail  :
+        print('asprilo win')
+        break
+
     start_time = time.time()
     content = subprocess.run('clingo encodings/m/encoding.ilp {} --outf=0 -V0 --out-atomf=%s.  | head -n1'.format(p),stdout=subprocess.PIPE,shell=True)
     solve_time = time.time() - start_time
@@ -169,44 +188,114 @@ for p in problems:
 
         #a_star
         print('a_star')
-        start_time = time.time()
-        content = subprocess.run('dotnet solvers/A_Star_WithOD_WithID-MAKESPAN.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
-        a_star_time = time.time() - start_time
-        a_star_output = content.stdout.decode('utf-8')
-        a_star_plan_file = p[:-2]+'astar'
-        astar_steps = gen_a_star_plan(a_star_output,a_star_plan_file)
+        if astar_fail:
+            a_star_time = 'skip'
+            astar_steps = 'NA'
+            print('astar skip')
+
+        else:
+            start_time = time.time()
+            content = subprocess.run('dotnet solvers/A_Star_WithOD_WithID-MAKESPAN.dll {} {}'.format( p[:-2]+'map', p[:-2] + 'agents') ,stdout=subprocess.PIPE,shell=True)
+            a_star_time = time.time() - start_time
+            a_star_output = content.stdout.decode('utf-8')
+            a_star_plan_file = p[:-2]+'astar'
+            astar_steps = gen_a_star_plan(a_star_output,a_star_plan_file) - 1
+            if a_star_time > 280 or astar_steps < 3:
+                astar_fail_counter += 1
+                print(f'astar fail {astar_fail_counter}')
+                astar_steps = 'NA'
+                a_star_time = 'timeout'
+                if astar_fail_counter == fail_limit : astar_fail = True
+            else : astar_fail_counter = 0
+                
+
+
 
         print('macbs-over-astarwithod-20-withBypass-withCardinalLookahead-MAKESPAN')
         #macbs-over-astarwithod-20-withBypass-withCardinalLookahead-MAKESPAN
-        start_time = time.time()
-        content = subprocess.run('dotnet solvers/macbs-over-astarwithod-20-withBypass-withCardinalLookahead-MAKESPAN.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
-        macbs_time = time.time() - start_time
-        macbs_output = content.stdout.decode('utf-8')
-        macbs_plan_file = p[:-2]+'cbs'
-        macbs_steps = gen_macbs_plan(macbs_output,macbs_plan_file)
+        if macbs_fail:
+            macbs_time = 'skip'
+            macbs_steps = 'NA'
+            print('macbs skip')
+
+        else:
+            start_time = time.time()
+            content = subprocess.run('dotnet solvers/macbs-over-astarwithod-20-withBypass-withCardinalLookahead-MAKESPAN.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
+            macbs_time = time.time() - start_time
+            macbs_output = content.stdout.decode('utf-8')
+            macbs_plan_file = p[:-2]+'cbs'
+            macbs_steps = gen_macbs_plan(macbs_output,macbs_plan_file) -1
+            if macbs_time > 280 or macbs_steps < 3:
+                macbs_fail_counter += 1
+                print(f'macbs fail {macbs_fail_counter}')
+                macbs_steps = 'NA'
+                macbs_time = 'timeout'
+                if macbs_fail_counter == fail_limit : macbs_fail = True
+            else:  macbs_fail_counter = 0
+
+
+
 
         print('ICTS_WithID-experimental-MAKESPAN')
         #ICTS_WithID-experimental-MAKESPAN
-        start_time = time.time()
-        content = subprocess.run('dotnet solvers/ICTS_WithID-experimental-MAKESPAN.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
-        icts_time = time.time() - start_time
-        icts_output = content.stdout.decode('utf-8')
-        icts_plan_file = p[:-2]+'cbs'
-        icts_steps = gen_icts_plan(icts_output,icts_plan_file)
+        if icts_fail:
+            icts_time = 'skip'
+            icts_steps = 'NA'
+            print('icts skip')
+
+        else:
+            start_time = time.time()
+            content = subprocess.run('dotnet solvers/ICTS_WithID-experimental-MAKESPAN.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
+            icts_time = time.time() - start_time
+            icts_output = content.stdout.decode('utf-8')
+            icts_plan_file = p[:-2]+'cbs'
+            icts_steps = gen_icts_plan(icts_output,icts_plan_file) -1
+            if icts_time > 280 or icts_steps < 3:
+                icts_fail_counter += 1
+                print(f'icts fail {icts_fail_counter}')
+                if icts_steps < 3 : 
+                    icts_time = 'fail'
+                else:
+                    icts_time = 'timeout'
+                icts_steps = 'NA'
+                if icts_fail_counter == fail_limit : icts_fail = True
+            else:  icts_fail_counter = 0
+
+
+
+
+
 
         print('cbs-withBypass-withCardinalLookahead-MAKESPAN')
         #cbs-withBypass-withCardinalLookahead-MAKESPAN
-        start_time = time.time()
-        content = subprocess.run('dotnet solvers/cbs-withBypass-withCardinalLookahead-MAKESPAN.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
-        cbs_time = time.time() - start_time
-        cbs_output = content.stdout.decode('utf-8')
-        cbs_plan_file = p[:-2]+'cbs'
-        cbs_steps = gen_cbs_plan(cbs_output,cbs_plan_file)
+        if cbs_fail:
+            cbs_time = 'skip'
+            cbs_steps = 'NA'
+            print('cbs skip')
+
+        else:
+            start_time = time.time()
+            content = subprocess.run('dotnet solvers/cbs-withBypass-withCardinalLookahead-MAKESPAN.dll {} {}'.format(p[:-2]+'map',p[:-2]+'agents'),stdout=subprocess.PIPE,shell=True)
+            cbs_time = time.time() - start_time
+            cbs_output = content.stdout.decode('utf-8')
+            cbs_plan_file = p[:-2]+'cbs'
+            cbs_steps = gen_cbs_plan(cbs_output,cbs_plan_file) -1
+            if cbs_time > 280 or cbs_steps < 3:
+                cbs_fail_counter += 1
+                print(f'cbs fail {cbs_fail_counter}')
+                cbs_steps = 'NA'
+                cbs_time = 'timeout'
+                if cbs_fail_counter == fail_limit : cbs_fail = True
+            else:  cbs_fail_counter = 0
+
+
+
+
     test_scores = {'problem_file': p, 'asp_time': solve_time, 'asp_steps': max_steps \
-                   ,'astar_time': a_star_time, 'astar_steps': astar_steps-1 \
-                   ,'macbs_time': macbs_time, 'macbs_steps': macbs_steps-1 \
-                   ,'icts_time': icts_time, 'icts_steps': icts_steps-1 \
-                   ,'cbs_time': cbs_time, 'cbs_steps': cbs_steps-1}
+                   ,'astar_time': a_star_time, 'astar_steps': astar_steps \
+                   ,'macbs_time': macbs_time, 'macbs_steps': macbs_steps \
+                   ,'icts_time': icts_time, 'icts_steps': icts_steps \
+                   ,'cbs_time': cbs_time, 'cbs_steps': cbs_steps}
     write_line('solvers_results.csv',test_scores,is_first)
     is_first=False
 
