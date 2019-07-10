@@ -250,16 +250,20 @@ for p in problems:
             icts_output = content.stdout.decode('utf-8')
             icts_plan_file = p[:-2]+'cbs'
             icts_steps = gen_icts_plan(icts_output,icts_plan_file) -1
-            if icts_time > 280 or icts_steps < 3:
-                icts_fail_counter += 1
-                print(f'icts fail {icts_fail_counter}')
-                if icts_steps < 3 : 
-                    icts_time = 'fail'
-                else:
-                    icts_time = 'timeout'
+            duration = icts_time
+            if icts_steps < 3 :
+                print(f'icts fail')
+                icts_time = 'fail'
                 icts_steps = 'NA'
-                if icts_fail_counter == fail_limit : icts_fail = True
-            else:  icts_fail_counter = 0
+            if duration > 280:
+                icts_fail_counter += 1
+                print(f'icts timeout {icts_fail_counter}')
+                icts_time = 'timeout'
+                icts_steps = 'NA'
+            else:
+                icts_fail_counter = 0
+            if icts_fail_counter == fail_limit : icts_fail = True
+
 
 
 
