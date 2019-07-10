@@ -167,7 +167,7 @@ class Adapter():
         print(asprilo_file_assigned)
 
 
-        file_name = f'generatedInstances/x{self.width}_y{self.height}_n{node_id-1}_r{self.robots}_N{self.N:03d}.lp'
+        file_name = f'generatedInstances/x{self.width}_y{self.height}_r{self.robots}_n{node_id-1}_N{self.N:03d}.lp'
         text_file = open(file_name, "w")
 
         text_file.write(asprilo_file_assigned)
