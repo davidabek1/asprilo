@@ -30,6 +30,7 @@ class Adapter():
         self.width=width
         self.height=height
         self.N=N
+
  
     def gen_map(self):
         lp_file = ''
@@ -53,7 +54,7 @@ class Adapter():
                     
                 #print(tile)
             #print('\n', sep='', end='', flush=True)
-            
+
         print(lp_file)
 
         
@@ -61,7 +62,7 @@ class Adapter():
         header = '%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n'
         header +=f'% Grid Size X:                      {X}\n'
         header +=f'% Grid Size Y:                      {Y}\n'
-        header +=f'% Number of Nodes:                  {X*Y}\n'
+        header +=f'% Number of Nodes:                  {node_id-1}\n'
         header +=f'% Number of Highway Nodes:          0\n'
         header +=f'% Number of Robots:                 {S}\n'
         header +=f'% Number of Shelves:                {S}\n'
@@ -166,7 +167,7 @@ class Adapter():
         print(asprilo_file_assigned)
 
 
-        file_name = f'generatedInstances/x{self.width}_y{self.height}_r{self.robots}_N{self.N:03d}.lp'
+        file_name = f'generatedInstances/x{self.width}_y{self.height}_n{node_id-1}_r{self.robots}_N{self.N:03d}.lp'
         text_file = open(file_name, "w")
 
         text_file.write(asprilo_file_assigned)
