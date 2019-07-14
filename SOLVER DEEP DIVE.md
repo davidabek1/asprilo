@@ -44,8 +44,8 @@ class SolverCbsh(Solver):
 ```
 
 MAPF solvers are counting on 2 python files:
-[from_asprilo.py](https://github.com/davidabek1/asprilo/blob/master/from_asprilo.py) - to convert ASP rules into map and agents files (maze.map, agents.agents)
-[Convert_agents_actions_2_asp.py](https://github.com/davidabek1/asprilo/blob/master/Convert_agents_actions_2_asp.py) - to convert solved by MAPF solution into ASP rules
+* [from_asprilo.py](https://github.com/davidabek1/asprilo/blob/master/from_asprilo.py) - to convert ASP rules into map and agents files (maze.map, agents.agents)
+* [Convert_agents_actions_2_asp.py](https://github.com/davidabek1/asprilo/blob/master/Convert_agents_actions_2_asp.py) - to convert solved by MAPF solution into ASP rules
 
 ## Invoking relevant solver
 
