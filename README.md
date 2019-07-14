@@ -13,7 +13,16 @@ and solving with MAPF solvers.
   we have found it can be installed on Linux only (some commands exists only on Linux platform).
 * Read carefully asprilo site and install the generator and vizualizer.
 * Install dotnet core, in order to be able to run the MAPF solvers DLLs.
-* create asprilo folder under users home directory, and clone this files and folders into it.
+* Branches in current git:
+  - master branch is handling Running Demo section
+    create asprilo folder under users home directory, and clone this files and folders into it.
+    master branch is following original asprilo installation while adding support for incremental solve,
+    while working with vizualizer, see issue #31 on their git site.
+    using this branch asprilo is solving only anonymous problems, while MAPF solvers are given default assignment
+    (e.g. first robot to first shelf, second robot to second shelf... )
+  - assignments branch is handling Running the tests section
+    create asprilo folder under users home directory, and clone this files and folders into it.
+    assignments branch has added support of assign rules to the encodings, so asprilo will solve non-anonymous problems
 ## Running the tests
 
 ### Generating logistic M problems
@@ -35,7 +44,8 @@ and solving with MAPF solvers.
     (keep assignment of robots to shelves)
   - translate the prolbem into MAPF problem by generating agents file and map file
   - run dotnet solvers and document solutions steps and time
-  solvers: A*+OD+ID, EPEA*, ICTS+ID, CBS
+  solvers: A*+OD+ID, EPEA*, ICTS+ID, CBS, CBS modern (CBSH), MACBS over A*
   - create solvers_results.csv file with all documented results.
 ## Running a Demo
+
 
