@@ -1,6 +1,6 @@
 # ASPRILO
 ASPRILO, an intra-logistics benchmark suite for answer set programming https://asprilo.github.io/
-see also github repository https://github.com/potassco/asprilo
+<br>see also github repository https://github.com/potassco/asprilo
 
 This project aims to extend ASPRILO solver (using CLINGO) with MAPF family solvers, 
 starting from M family problems (only moving toward shelves in the warehouse),
@@ -15,14 +15,14 @@ and solving with MAPF solvers.
 * Install dotnet core, in order to be able to run the MAPF solvers DLLs.
 * Branches in current git:
   - master branch is handling Running Demo section
-    create asprilo folder under users home directory, and clone this files and folders into it.
-    master branch is following original asprilo installation while adding support for incremental solve,
-    while working with vizualizer, see issue #31 on their git site.
-    using this branch asprilo is solving only anonymous problems, while MAPF solvers are given default assignment
-    (e.g. first robot to first shelf, second robot to second shelf... )
+    <br>create asprilo folder under users home directory, and clone this files and folders into it.
+    <br>master branch is following original asprilo installation while adding support for incremental solve,
+    <br>while working with vizualizer, see issue #31 on their git site.
+    <br>using this branch asprilo is solving only anonymous problems, while MAPF solvers are given default assignment
+    <br>(e.g. first robot to first shelf, second robot to second shelf... )
   - assignments branch is handling Running the tests section
-    create asprilo folder under users home directory, and clone this files and folders into it.
-    assignments branch has added support of assign rules to the encodings, so asprilo will solve non-anonymous problems
+    <br>create asprilo folder under users home directory, and clone this files and folders into it.
+    <br>assignments branch has added support of assign rules to the encodings, so asprilo will solve non-anonymous problems
 ## Running the tests
 
 ### Generating logistic M problems
