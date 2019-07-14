@@ -70,8 +70,9 @@ The vizualizer is communicating with the attached solver over configured port (5
   - run a sub process triggering the .NET Dlls with the created files
   - on success, coverting back the solution to ASP format plan
 * on solver success, plan is communicated back to the vizualizer for examining.
-<br>
-<br> extended information on the changes is in [SOLVER DEEP DIVE.md](https://github.com/davidabek1/asprilo/blob/master/SOLVER%20DEEP%20DIVE.md)
+
+<br> extended information on the changes is in [SOLVER.md](https://github.com/davidabek1/asprilo/blob/master/SOLVER%20DEEP%20DIVE.md)
+
 
 ## Authors
 
